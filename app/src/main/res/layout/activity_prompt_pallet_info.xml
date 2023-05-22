@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:name="Cost_of_Pallet"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:label="@string/app_name"
+    tools:context=".Prompt_Pallet_Info">
+
+    <EditText
+        android:id="@+id/editTextTextPersonName2"
+        android:layout_width="268dp"
+        android:layout_height="59dp"
+        android:ems="10"
+        android:gravity="right|center_horizontal"
+        android:inputType="textPersonName"
+        android:text="EX 005"
+        app:layout_constraintBottom_toBottomOf="@+id/Pallet_Num"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.304"
+        app:layout_constraintStart_toEndOf="@+id/Pallet_Num"
+        app:layout_constraintTop_toTopOf="@+id/Pallet_Num" />
+
+    <TextView
+        android:id="@+id/Pallet_Cost"
+        android:layout_width="120dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="30dp"
+        android:text="Cost of Pallet"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Pallet_Num" />
+
+    <TextView
+        android:id="@+id/Title_CreatePallet"
+        android:layout_width="218dp"
+        android:layout_height="61dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Create Pallet"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/BackB_PalletInventory"
+        android:layout_width="98dp"
+        android:layout_height="46dp"
+        android:text="Back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/Pallet_Num"
+        android:layout_width="120dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="20dp"
+        android:text="Pallet Number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Title_CreatePallet" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName"
+        android:layout_width="268dp"
+        android:layout_height="59dp"
+        android:ems="10"
+        android:gravity="right|center_horizontal"
+        android:inputType="textPersonName"
+        android:text="00"
+        app:layout_constraintBottom_toBottomOf="@+id/Pallet_Cost"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.304"
+        app:layout_constraintStart_toEndOf="@+id/Pallet_Cost"
+        app:layout_constraintTop_toTopOf="@+id/Pallet_Cost" />
+
+    <TextView
+        android:id="@+id/Company"
+        android:layout_width="120dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="40dp"
+        android:text="Company"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Pallet_Cost" />
+
+
+    <Spinner
+        android:id="@+id/Man_List"
+        android:layout_width="268dp"
+        android:layout_height="59dp"
+        android:layout_marginEnd="10dp"
+        android:entries="@android:array/organizationTypes"
+        app:layout_constraintBottom_toBottomOf="@+id/Company"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/Company"
+        app:layout_constraintTop_toTopOf="@+id/Company" />
+
+    <TextView
+        android:id="@+id/Supplier"
+        android:layout_width="120dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="40dp"
+        android:text="Supplier"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Company" />
+
+    <Spinner
+        android:id="@+id/Supplier_Spinner"
+        android:layout_width="268dp"
+        android:layout_height="59dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/Supplier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/Supplier"
+        app:layout_constraintTop_toTopOf="@+id/Supplier" />
+
+    <Button
+        android:id="@+id/Create_Pallet_Button"
+        android:layout_width="147dp"
+        android:layout_height="59dp"
+        android:layout_marginBottom="304dp"
+        android:text="Create Pallet"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.839"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
