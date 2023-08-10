@@ -15,20 +15,14 @@ import android.widget.Toast;
 
 public class Prompt_Pallet_Info extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    String[] compaines = {"Amazon", "Cummins", "Apple"};
-    String[] Suppliers = {"Lake Erie Liquidators", "Company A", "Other"};
+    private String[] compaines = {};
+    private String[] Suppliers = {};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prompt_pallet_info);
-         Button Create_Pallet = (Button) findViewById(R.id.Create_Pallet_Button);
-        Create_Pallet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });
         Button back = (Button) findViewById(R.id.BackB_PalletInventory);
         back.setOnClickListener(new View.OnClickListener() {
 
@@ -39,6 +33,18 @@ public class Prompt_Pallet_Info extends AppCompatActivity implements AdapterView
 
             }
         });
+        // adding names of companies
+
+        Button addCom = (Button) findViewById(R.id.Add_Company);
+        addCom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+
+
         //tells you which spinner is selected
         Spinner spino2 = findViewById(R.id.Supplier_Spinner);
         Spinner spino = findViewById(R.id.Man_List);
@@ -52,6 +58,7 @@ public class Prompt_Pallet_Info extends AppCompatActivity implements AdapterView
         ad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spino2.setAdapter(ad2);
         spino.setAdapter(ad);
+
 
 
     }

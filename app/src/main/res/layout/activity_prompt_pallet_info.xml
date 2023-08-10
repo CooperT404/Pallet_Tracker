@@ -36,6 +36,7 @@
         android:id="@+id/Title_CreatePallet"
         android:layout_width="218dp"
         android:layout_height="61dp"
+        android:layout_marginStart="5dp"
         android:gravity="center_horizontal|center_vertical"
         android:text="Create Pallet"
         android:textSize="24sp"
@@ -117,15 +118,49 @@
         app:layout_constraintTop_toTopOf="@+id/Supplier" />
 
     <Button
-        android:id="@+id/Create_Pallet_Button"
-        android:layout_width="147dp"
-        android:layout_height="59dp"
-        android:layout_marginBottom="304dp"
-        android:text="Create Pallet"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.839"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:id="@+id/Add_Company"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="60dp"
+        android:text="New Company"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Supplier" />
+
+    <Button
+        android:id="@+id/Add_Supplier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="New Supplier"
+        app:layout_constraintEnd_toEndOf="@+id/Add_Company"
+        app:layout_constraintStart_toStartOf="@+id/Add_Company"
+        app:layout_constraintTop_toBottomOf="@+id/Add_Company" />
+
+    <EditText
+        android:id="@+id/nCom"
+        android:layout_width="225dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="30dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name of Company"
+        app:layout_constraintBottom_toBottomOf="@+id/Add_Company"
+        app:layout_constraintStart_toEndOf="@+id/Add_Company"
+        app:layout_constraintTop_toTopOf="@+id/Add_Company" />
+
+    <EditText
+        android:id="@+id/nSupl"
+        android:layout_width="225dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name Of Supplier"
+        app:layout_constraintBottom_toBottomOf="@+id/Add_Supplier"
+        app:layout_constraintStart_toEndOf="@+id/Add_Supplier"
+        app:layout_constraintTop_toBottomOf="@+id/nCom" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

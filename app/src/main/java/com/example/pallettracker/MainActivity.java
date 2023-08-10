@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -15,6 +16,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        final LinearLayout Pallet_Info_ButtonsList = findViewById(R.id.Pallet_Info_ButtonsList);
+
 
         //Text for the pallet in preview
         LinearLayout linearLayout = new LinearLayout(this);
@@ -28,11 +32,26 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, Prompt_Pallet_Info.class);
-                startActivity(intent);
+
+                Button newButton = new Button(MainActivity.this);
+                newButton.setText("New Pallet");
+                newButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(MainActivity.this, Prompt_Pallet_Info.class);
+                        startActivity(intent);
+                    }
+                });
+
+                LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                newButton.setLayoutParams(layoutParams);
+
+                Pallet_Info_ButtonsList.addView(newButton);
 
             }
         });
+
+
         //Nav Buttons too different pages
 
         Button calculator = (Button) findViewById(R.id.b_To_Calc);
