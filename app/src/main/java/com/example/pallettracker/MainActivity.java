@@ -4,16 +4,24 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
+
+import kotlin.jvm.internal.markers.KMutableList;
+
 
 public class MainActivity extends AppCompatActivity {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -41,10 +49,18 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(MainActivity.this, Prompt_Pallet_Info.class);
                         startActivity(intent);
                     }
+
                 });
 
-                LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.height = 150;
+                layoutParams.width =1000;
+                layoutParams.gravity = Gravity.CENTER;
+
                 newButton.setLayoutParams(layoutParams);
+
+
 
                 Pallet_Info_ButtonsList.addView(newButton);
 
