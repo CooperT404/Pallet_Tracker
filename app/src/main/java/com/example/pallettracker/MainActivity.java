@@ -1,33 +1,34 @@
 package com.example.pallettracker;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import java.util.ArrayList;
 
-import kotlin.jvm.internal.markers.KMutableList;
+public class MainActivity extends Prompt_Pallet_Info {
 
-
-public class MainActivity extends AppCompatActivity {
-
-
+    private int buttonCount = 0;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sharedPreferences = getSharedPreferences("MyButtons", Context.MODE_PRIVATE);
+
         final LinearLayout Pallet_Info_ButtonsList = findViewById(R.id.Pallet_Info_ButtonsList);
-
-
+        loadData(Pallet_Info_ButtonsList);
         //Text for the pallet in preview
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -40,30 +41,17 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-
+                buttonCount++;
                 Button newButton = new Button(MainActivity.this);
-                newButton.setText("New Pallet");
-                newButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(MainActivity.this, Prompt_Pallet_Info.class);
-                        startActivity(intent);
-                    }
-
-                });
-
-
+                newButton.setText("New Pallet" + buttonCount);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.height = 150;
                 layoutParams.width =1000;
                 layoutParams.gravity = Gravity.CENTER;
 
                 newButton.setLayoutParams(layoutParams);
-
-
-
                 Pallet_Info_ButtonsList.addView(newButton);
-
+                saveData();
             }
         });
 
@@ -94,8 +82,33 @@ public class MainActivity extends AppCompatActivity {
 //                startActivity(intent);
             }
         });
+
+
+
     }
 
 
+    private void saveData() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("buttonCount", buttonCount);
+        editor.apply();
+    }
 
+    private void loadData(LinearLayout layout) {
+        buttonCount = sharedPreferences.getInt("buttonCount", 0);
+        for (int i = 1; i <= buttonCount; i++) {
+            Button newButton = new Button(MainActivity.this);
+            newButton.setText("New Pallet " + i);
+            newButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(MainActivity.this, Prompt_Pallet_Info.class);
+                    startActivity(intent);
+                }
+
+            });
+            layout.addView(newButton);
+        }
+    }
 }
