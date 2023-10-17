@@ -1,22 +1,19 @@
 package com.example.pallettracker;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
-
-import java.util.ArrayList;
-
-import kotlin.jvm.internal.markers.KMutableList;
 
 
 public class MainActivity extends AppCompatActivity {
 
+    private int buttonCount = 0;
 
 
     @Override
@@ -26,8 +23,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final LinearLayout Pallet_Info_ButtonsList = findViewById(R.id.Pallet_Info_ButtonsList);
-
-
         //Text for the pallet in preview
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -40,10 +35,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-
+                buttonCount++;
                 Button newButton = new Button(MainActivity.this);
                 newButton.setText("New Pallet");
                 newButton.setOnClickListener(new View.OnClickListener() {
+
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(MainActivity.this, Prompt_Pallet_Info.class);
@@ -55,11 +51,10 @@ public class MainActivity extends AppCompatActivity {
 
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.height = 150;
-                layoutParams.width =1000;
+                layoutParams.width = 1000;
                 layoutParams.gravity = Gravity.CENTER;
 
                 newButton.setLayoutParams(layoutParams);
-
 
 
                 Pallet_Info_ButtonsList.addView(newButton);
@@ -94,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
 //                startActivity(intent);
             }
         });
+
+
     }
-
-
-
 }
+

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class Prompt_Pallet_Info extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+    public String name_PalletInfo = String.valueOf(R.id.name_Pallet);
 
     private String[] compaines = {};
     private String[] Suppliers = {};
@@ -73,3 +74,4 @@ public class Prompt_Pallet_Info extends AppCompatActivity implements AdapterView
 
     }
 }
+
