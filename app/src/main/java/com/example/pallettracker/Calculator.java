@@ -9,7 +9,7 @@ import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.Button;
 
-public class Calculator extends AppCompatActivity {
+public class Calculator extends MainActivity {
     int temp = 0;
     double Array[];
     int i = 0;

@@ -15,9 +15,6 @@
             android:name=".Calculator"
             android:exported="false" />
         <activity
-            android:name=".Prompt_Pallet_Info"
-            android:exported="false" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

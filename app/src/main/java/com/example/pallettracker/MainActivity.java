@@ -1,62 +1,28 @@
 package com.example.pallettracker;
 
-import androidx.annotation.NonNull;
-
-import android.annotation.SuppressLint;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends Prompt_Pallet_Info {
 
-    private int buttonCount = 0;
-    private SharedPreferences sharedPreferences;
+public class MainActivity extends AppCompatActivity {
+
+    private LinearLayout Pallet_Info_ButtonsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
+        //Nav Buttons too different pages
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sharedPreferences = getSharedPreferences("MyButtons", Context.MODE_PRIVATE);
-
-        final LinearLayout Pallet_Info_ButtonsList = findViewById(R.id.Pallet_Info_ButtonsList);
-        loadData(Pallet_Info_ButtonsList);
-        //Text for the pallet in preview
-        LinearLayout linearLayout = new LinearLayout(this);
-        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-
-        //Creating new instances for differing pallets
-        // Click Button...
-
-        Button CNP = (Button) findViewById(R.id.New_Pallet);
-        CNP.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                buttonCount++;
-                Button newButton = new Button(MainActivity.this);
-                newButton.setText("New Pallet" + buttonCount);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                layoutParams.height = 150;
-                layoutParams.width =1000;
-                layoutParams.gravity = Gravity.CENTER;
-
-                newButton.setLayoutParams(layoutParams);
-                Pallet_Info_ButtonsList.addView(newButton);
-                saveData();
-            }
-        });
-
-
-        //Nav Buttons too different pages
+        Pallet_Info_ButtonsList = findViewById(R.id.Pallet_Info_ButtonsList);
 
         Button calculator = (Button) findViewById(R.id.b_To_Calc);
         calculator.setOnClickListener(new View.OnClickListener() {
@@ -82,33 +48,56 @@ public class MainActivity extends Prompt_Pallet_Info {
 //                startActivity(intent);
             }
         });
+        //------------------------------------------------------------------------------------
+        Button AddPallet = findViewById(R.id.New_Pallet);
+        AddPallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAddButtonDialog();
+            }
+        });
 
 
 
     }
+    private void showAddButtonDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Pallet Information");
+
+        View customLayout = getLayoutInflater().inflate(R.layout.custom_layout, null);
+        builder.setView(customLayout);
+
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                EditText Company = customLayout.findViewById(R.id.Company);
+                EditText Supplier = customLayout.findViewById(R.id.Supplier);
+                EditText Units = customLayout.findViewById(R.id.TotalNumber_Units);
+                EditText Price = customLayout.findViewById(R.id.TotalNumber_Price);
+
+                String Company_Input = Company.getText().toString();
+                String Supplier_Input = Supplier.getText().toString();
+                String Units_Input = Units.getText().toString();
+                String Price_Input = Price.getText().toString();
 
 
-    private void saveData() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("buttonCount", buttonCount);
-        editor.apply();
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.show();
     }
+    private void addButton(String label){
+        Button newButton = new Button(this);
+        newButton.setText(label);
 
-    private void loadData(LinearLayout layout) {
-        buttonCount = sharedPreferences.getInt("buttonCount", 0);
-        for (int i = 1; i <= buttonCount; i++) {
-            Button newButton = new Button(MainActivity.this);
-            newButton.setText("New Pallet " + i);
-            newButton.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(MainActivity.this, Prompt_Pallet_Info.class);
-                    startActivity(intent);
-                }
-
-            });
-            layout.addView(newButton);
-        }
     }
 }
+
