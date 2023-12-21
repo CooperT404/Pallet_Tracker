@@ -7,13 +7,14 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DataBaseHandler {
+public class DataBaseHandler extends MainActivity{
     private SQLiteDatabase database;
     private DBHelper dbHelper;
 
 
     public DataBaseHandler(Context context){
-        DBHelper dbHelper = new DBHelper(context);
+
+        dbHelper = new DBHelper(context);
     }
     // open database
     public void open() throws SQLException {
@@ -21,6 +22,7 @@ public class DataBaseHandler {
     }
     // close
     public void close(){
+
         dbHelper.close();
     }
 
@@ -37,8 +39,12 @@ public class DataBaseHandler {
         return database.insert("Product_Info", null, values);
     }
     // retrieve data
-    public Cursor getAllData(){
-        return database.query("Product_Info", null, null, null, null, null, null);
+    public Cursor getAllData(int id){
+        String[] columns = {"id", "Pallet_Num", "Company", "Supplier", "Total_Units", "Price"};
+        String selection = "id = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        return database.query("Product_Info", columns, selection, selectionArgs, null, null, null);
     }
 
 }
