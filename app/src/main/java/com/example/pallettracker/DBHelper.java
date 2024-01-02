@@ -1,10 +1,24 @@
 package com.example.pallettracker;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.BaseColumns;
 
 public class DBHelper extends SQLiteOpenHelper {
+
+    public static final class YourContract{
+        private YourContract() {}
+
+        public static final class YourTable implements BaseColumns {
+            public static final String TABLE_NAME = "Pallets";
+            public static final String COLUMN_NAME_DATA = "Pallet_Data";
+        }
+
+
+    }
 
     private static final String DATABASE_NAME = "Product_Info";
     private static final int DATABASE_VERSION = 1;
@@ -26,6 +40,31 @@ public class DBHelper extends SQLiteOpenHelper {
                 "Price INTEGER)";
 
         db.execSQL(createTableQuery);
+    }
+    // add method to retrieve data from the database
+    @SuppressLint("Range")
+    public String getDataById(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] projection = {YourContract.YourTable.COLUMN_NAME_DATA};
+        String selection = YourContract.YourTable._ID + "=?";
+        String[] selectionArgs = {String.valueOf(id)};
+        Cursor cursor = db.query(
+                YourContract.YourTable.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        String data = null;
+
+        if (cursor != null && cursor.moveToFirst()){
+            data = cursor.getString(cursor.getColumnIndex(YourContract.YourTable.COLUMN_NAME_DATA));
+            cursor.close();
+        }
+        return data;
     }
 
     // Upgrade database (if needed)

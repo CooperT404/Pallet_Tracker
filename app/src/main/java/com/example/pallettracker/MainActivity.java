@@ -1,8 +1,10 @@
 package com.example.pallettracker;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -125,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
+
                 dialogInterface.dismiss();
             }
         });
@@ -135,10 +138,18 @@ public class MainActivity extends AppCompatActivity {
         Button newButton = new Button(this);
         newButton.setText("Pallet: " + total_Pallets);
 
+        View customLayout = getLayoutInflater().inflate(R.layout.custom_layout, null);
+
+        AlertDialog.Builder Editbuilder = new AlertDialog.Builder(this);
+        Editbuilder.setTitle("Edit Pallet");
+        Editbuilder.setView(customLayout);
+
         newButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadDataFromDatabase();
+                showAddButtonDialog();
+                onPause();
+
             }
         });
 
@@ -171,6 +182,19 @@ public class MainActivity extends AppCompatActivity {
         }
         dataHandler.close();
 
+    }
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = preferences.edit();
+
+        Button button = findViewById(R.id.New_Pallet);
+        boolean isButtonEnabled = button.isEnabled();
+        editor.putBoolean("button_state", isButtonEnabled);
+
+        editor.apply();
     }
 
 }
