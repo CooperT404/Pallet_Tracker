@@ -11,15 +11,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private LinearLayout Pallet_Info_ButtonsList;
+
     private DataBaseHandler dataHandler;
+    private DBHelper dbHelper = new DBHelper(this);
     private int total_Pallets = 0;
 
     @Override
@@ -68,19 +73,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 total_Pallets += 1;
-
-
-                addButton(view);
-
-
-                showAddButtonDialog();
+                showAddButtonDialog(view);
             }
         });
 
 
 
+
     }
-    private void showAddButtonDialog(){
+
+    private void showAddButtonDialog(View view){
         View customLayout = getLayoutInflater().inflate(R.layout.custom_layout, null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -104,21 +106,12 @@ public class MainActivity extends AppCompatActivity {
                 String Units_Input = Units.getText().toString();
                 String Price_Input = Price.getText().toString();
 
-                if(Units_Input != null) {
-                    units_int = Integer.parseInt(Units_Input);
-                }
-                else {
-                    units_int = 0;
-                }
-                if(Price_Input != null){
-                    price_int = Integer.parseInt(Price_Input);
-                }
-                else {
-                    price_int = 0;
-                }
+               int inUnits = Integer.parseInt(Units_Input);
+               int inPrice = Integer.parseInt(Price_Input);
 
-                long result = dataHandler.insertData(total_Pallets, Company_Input, Supplier_Input, units_int, price_int);
+                dataHandler.insertData(Company_Input, Supplier_Input, inUnits, inPrice);
 
+                addButton(view);
 
                 dialogInterface.dismiss();
             }
@@ -134,9 +127,17 @@ public class MainActivity extends AppCompatActivity {
 
         builder.show();
     }
+
+
+
     private void addButton(View view){
         Button newButton = new Button(this);
-        newButton.setText("Pallet: " + total_Pallets);
+        newButton.setText("Pallets: " + total_Pallets);
+
+        int buttonId = View.generateViewId();
+        newButton.setId(buttonId);
+
+        newButton.setTag(total_Pallets);
 
         View customLayout = getLayoutInflater().inflate(R.layout.custom_layout, null);
 
@@ -147,40 +148,19 @@ public class MainActivity extends AppCompatActivity {
         newButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAddButtonDialog();
-                onPause();
+                Integer palletIndex = (Integer) newButton.getTag();
+
+                if (palletIndex != null){
+                    fetchData(palletIndex);
+                    onPause();
+                }
+                else;
 
             }
         });
 
         Pallet_Info_ButtonsList.addView(newButton);
 
-    }
-    private void loadDataFromDatabase(){
-        dataHandler.open();
-
-        Cursor cursor = dataHandler.getAllData(1);
-
-        if (cursor != null && cursor.moveToFirst()){
-            @SuppressLint("Range") int palletNum = cursor.getInt(cursor.getColumnIndex("Pallet_Num"));
-            @SuppressLint("Range") String company = cursor.getString(cursor.getColumnIndex("Company"));
-            @SuppressLint("Range") String supplier = cursor.getString(cursor.getColumnIndex("Supplier"));
-            @SuppressLint("Range") int units = cursor.getInt(cursor.getColumnIndex("Total_Units"));
-            @SuppressLint("Range") int price = cursor.getInt(cursor.getColumnIndex("Price"));
-
-            EditText Comp = findViewById(R.id.Company);
-            EditText Supp = findViewById(R.id.Supplier);
-            EditText Text_Units = findViewById(R.id.TotalNumber_Units);
-            EditText Text_Price = findViewById(R.id.TotalNumber_Price);
-
-            Comp.setText(company);
-            Supp.setText(supplier);
-            Text_Units.setText(units);
-            Text_Price.setText(price);
-
-            cursor.close();
-        }
-        dataHandler.close();
 
     }
     protected void onPause() {
@@ -195,6 +175,24 @@ public class MainActivity extends AppCompatActivity {
         editor.putBoolean("button_state", isButtonEnabled);
 
         editor.apply();
+    }
+    private void fetchData(int e){
+        View customLayout = getLayoutInflater().inflate(R.layout.custom_layout, null);
+        List<DataModel> dataList = dbHelper.getAllData(e);
+
+        if(!dataList.isEmpty() && e < dataList.size()){
+            DataModel data = dataList.get(0);
+
+            EditText companyEditText = customLayout.findViewById(R.id.Company);
+            EditText supplierEditText = customLayout.findViewById(R.id.Supplier);
+            EditText unitsEditText = customLayout.findViewById(R.id.TotalNumber_Units);
+            EditText priceEditText = customLayout.findViewById(R.id.TotalNumber_Price);
+
+            companyEditText.setText(data.getCompany());
+            supplierEditText.setText(data.getSupplier());
+            unitsEditText.setText(String.valueOf(data.getUnits()));
+            priceEditText.setText(String.valueOf(data.getCost()));
+        }
     }
 
 }

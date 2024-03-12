@@ -1,75 +1,73 @@
 package com.example.pallettracker;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final class YourContract{
-        private YourContract() {}
-
-        public static final class YourTable implements BaseColumns {
-            public static final String TABLE_NAME = "Pallets";
-            public static final String COLUMN_NAME_DATA = "Pallet_Data";
-        }
-
-
-    }
-
-    private static final String DATABASE_NAME = "Product_Info";
+    private static final String DATABASE_NAME = "YourDatabaseName";
     private static final int DATABASE_VERSION = 1;
 
-    // Constructor
+    // Table and columns
+    public static final String TABLE_NAME = "YourTableName";
+    public static final String COLUMN_ID = "ID";
+    public static final String COLUMN_COMPANY = "Company";
+    public static final String COLUMN_SUPPLIER = "Supplier";
+    public static final String COLUMN_UNITS = "Units";
+    public static final String COLUMN_COST = "Cost";
+
+    // Create table query
+    private static final String CREATE_TABLE_QUERY = "CREATE TABLE " + TABLE_NAME + " (" +
+            COLUMN_ID + " INTEGER PRIMARY KEY," +
+            COLUMN_COMPANY + " TEXT," +
+            COLUMN_SUPPLIER + " TEXT," +
+            COLUMN_UNITS + " INTEGER," +
+            COLUMN_COST + " REAL" +
+            ")";
+
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    // Create tables for the needed parameters
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTableQuery = "CREATE TABLE IF NOT EXISTS Product_Info (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "Pallet_Num INTEGER," +
-                "Company TEXT," +
-                "Supplier TEXT," +
-                "Total_Units INTEGER," +
-                "Price INTEGER)";
-
-        db.execSQL(createTableQuery);
-    }
-    // add method to retrieve data from the database
-    @SuppressLint("Range")
-    public String getDataById(int id){
-        SQLiteDatabase db = this.getReadableDatabase();
-        String[] projection = {YourContract.YourTable.COLUMN_NAME_DATA};
-        String selection = YourContract.YourTable._ID + "=?";
-        String[] selectionArgs = {String.valueOf(id)};
-        Cursor cursor = db.query(
-                YourContract.YourTable.TABLE_NAME,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-
-        String data = null;
-
-        if (cursor != null && cursor.moveToFirst()){
-            data = cursor.getString(cursor.getColumnIndex(YourContract.YourTable.COLUMN_NAME_DATA));
-            cursor.close();
-        }
-        return data;
+        db.execSQL(CREATE_TABLE_QUERY);
     }
 
-    // Upgrade database (if needed)
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Handle database upgrades here
+        // Implement upgrade logic here if needed
+    }
+
+
+
+    @SuppressLint("Range")
+    public List<DataModel> getAllData(int e){
+
+        List<DataModel> dataList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_ID + " = " + e ,null);
+        if(cursor.moveToFirst()){
+            do {
+                DataModel data = new DataModel();
+                data.setId(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
+                data.setCompany(cursor.getString(cursor.getColumnIndex(COLUMN_COMPANY)));
+                data.setSupplier(cursor.getString(cursor.getColumnIndex(COLUMN_SUPPLIER)));
+                data.setUnits(cursor.getInt(cursor.getColumnIndex(COLUMN_UNITS)));
+                data.setCost(cursor.getDouble(cursor.getColumnIndex(COLUMN_COST)));
+
+
+            }while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return dataList;
     }
 }
