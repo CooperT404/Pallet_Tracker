@@ -1,17 +1,17 @@
 package com.example.pallettracker;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.view.LayoutInflater;
-import android.database.Cursor;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,24 +21,24 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private MyDatabaseHelper dbHelper;
-    private LinearLayout verticalLayout;
+    private LinearLayout Pallet_Info_ButtonsList;
 
-
-
-
-
+    private DataBaseHandler dataHandler;
+    private DBHelper dbHelper = new DBHelper(this);
     private int total_Pallets = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         //Nav Buttons too different pages
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dbHelper = new MyDatabaseHelper(this);
-        verticalLayout = findViewById(R.id.Pallet_Info_ButtonsList);
+        Pallet_Info_ButtonsList = findViewById(R.id.Pallet_Info_ButtonsList);
+
+        dataHandler = new DataBaseHandler(this);
+        dataHandler.open();
+
+        Pallet_Info_ButtonsList = findViewById(R.id.Pallet_Info_ButtonsList);
 
         Button calculator = (Button) findViewById(R.id.b_To_Calc);
         calculator.setOnClickListener(new View.OnClickListener() {
@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
         notes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent_notes = new Intent(MainActivity.this, Notes.class);
-                startActivity(intent_notes);
+//                Intent intent = new Intent(MainActivity.this, Prompt_Pallet_Info.class);
+//                startActivity(intent);
             }
         });
         Button archive = (Button) findViewById(R.id.b_To_Archive);
@@ -73,97 +73,127 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 total_Pallets += 1;
-                createNumberedButtons(total_Pallets);
-                showInputDialog();
+                showAddButtonDialog(view);
             }
         });
 
+
+
+
+    }
+
+    private void showAddButtonDialog(View view){
+        View customLayout = getLayoutInflater().inflate(R.layout.custom_layout, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Pallet Information");
+
+
+        builder.setView(customLayout);
+
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                int units_int;
+                int price_int;
+                EditText Company = customLayout.findViewById(R.id.Company);
+                EditText Supplier = customLayout.findViewById(R.id.Supplier);
+                EditText Units = customLayout.findViewById(R.id.TotalNumber_Units);
+                EditText Price = customLayout.findViewById(R.id.TotalNumber_Price);
+
+                String Company_Input = Company.getText().toString();
+                String Supplier_Input = Supplier.getText().toString();
+                String Units_Input = Units.getText().toString();
+                String Price_Input = Price.getText().toString();
+
+               int inUnits = Integer.parseInt(Units_Input);
+               int inPrice = Integer.parseInt(Price_Input);
+
+                dataHandler.insertData(Company_Input, Supplier_Input, inUnits, inPrice);
+
+                addButton(view);
+
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.show();
     }
 
 
 
-    protected void showInputDialog() {
-        LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View promptView = layoutInflater.inflate(R.layout.custom_layout, null);
+    private void addButton(View view){
+        Button newButton = new Button(this);
+        newButton.setText("Pallets: " + total_Pallets);
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setView(promptView);
-        alertDialogBuilder.setTitle("Pallet Information");
+        int buttonId = View.generateViewId();
+        newButton.setId(buttonId);
 
-        final EditText companyEditText = promptView.findViewById(R.id.Company);
-        final EditText supplierEditText = promptView.findViewById(R.id.Supplier);
-        final EditText unitsEditText = promptView.findViewById(R.id.TotalNumber_Units);
-        final EditText costEditText = promptView.findViewById(R.id.TotalNumber_Price);
+        newButton.setTag(total_Pallets);
 
-        alertDialogBuilder.setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        String company = companyEditText.getText().toString();
-                        String supplier = supplierEditText.getText().toString();
-                        int units = Integer.parseInt(unitsEditText.getText().toString());
-                        float cost = Float.parseFloat(costEditText.getText().toString());
+        View customLayout = getLayoutInflater().inflate(R.layout.custom_layout, null);
 
-                        // Insert data into your database using your insert statement
-                        dbHelper.insertData( company, supplier, units, cost);
+        AlertDialog.Builder Editbuilder = new AlertDialog.Builder(this);
+        Editbuilder.setTitle("Edit Pallet");
+        Editbuilder.setView(customLayout);
 
-                        // Incremental ID can be automatically generated by the database
-                        // (e.g., auto-increment primary key)
-                        // ...
-                    }
-                });
+        newButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Integer palletIndex = (Integer) newButton.getTag();
 
-        AlertDialog alert = alertDialogBuilder.create();
-        alert.show();
-    }
-    private void createNumberedButtons(int count) {
-        for (int i = 1; i <= count; i++) {
-            Button button = new Button(this);
-            button.setText(String.valueOf(i));
-            button.setId(i); // Set a unique ID for each button (optional)
-
-            // Set an onClickListener for each button
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int buttonNumber = v.getId();
-                    showDataForButton(buttonNumber);
+                if (palletIndex != null){
+                    fetchData(palletIndex);
+                    onPause();
                 }
-            });
+                else;
 
-            // Add the button to the vertical layout
-            verticalLayout.addView(button);
+            }
+        });
+
+        Pallet_Info_ButtonsList.addView(newButton);
+
+
+    }
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = preferences.edit();
+
+        Button button = findViewById(R.id.New_Pallet);
+        boolean isButtonEnabled = button.isEnabled();
+        editor.putBoolean("button_state", isButtonEnabled);
+
+        editor.apply();
+    }
+    private void fetchData(int e){
+        View customLayout = getLayoutInflater().inflate(R.layout.custom_layout, null);
+        List<DataModel> dataList = dbHelper.getAllData(e);
+
+        if(!dataList.isEmpty() && e < dataList.size()){
+            DataModel data = dataList.get(0);
+
+            EditText companyEditText = customLayout.findViewById(R.id.Company);
+            EditText supplierEditText = customLayout.findViewById(R.id.Supplier);
+            EditText unitsEditText = customLayout.findViewById(R.id.TotalNumber_Units);
+            EditText priceEditText = customLayout.findViewById(R.id.TotalNumber_Price);
+
+            companyEditText.setText(data.getCompany());
+            supplierEditText.setText(data.getSupplier());
+            unitsEditText.setText(String.valueOf(data.getUnits()));
+            priceEditText.setText(String.valueOf(data.getCost()));
         }
     }
-    private void showDataForButton(int buttonNumber) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        // Query your database based on the button number
-        Cursor cursor = db.rawQuery("SELECT * FROM my_table WHERE _id = ?", new String[]{String.valueOf(buttonNumber)});
-
-        if (cursor.moveToFirst()) {
-            @SuppressLint("Range") String company = cursor.getString(cursor.getColumnIndex("company"));
-            @SuppressLint("Range") String supplier = cursor.getString(cursor.getColumnIndex("supplier"));
-            @SuppressLint("Range") int units = cursor.getInt(cursor.getColumnIndex("units"));
-            @SuppressLint("Range") float cost = cursor.getFloat(cursor.getColumnIndex("cost"));
-
-            // Create an alert dialog to display the data
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-            alertDialogBuilder.setTitle("Data for Button " + buttonNumber);
-            alertDialogBuilder.setMessage("Company: " + company + "\n" +
-                    "Supplier: " + supplier + "\n" +
-                    "Units: " + units + "\n" +
-                    "Cost: $" + cost);
-            alertDialogBuilder.setPositiveButton("OK", null);
-            alertDialogBuilder.show();
-        } else {
-
-        }
-
-        cursor.close();
-        db.close();
-    }
-
-
 
 }
 
