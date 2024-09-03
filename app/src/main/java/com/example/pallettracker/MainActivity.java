@@ -58,14 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent_calc);
             }
         });
-        Button notes = (Button) findViewById(R.id.b_To_Notes);
-        notes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent_notes = new Intent(MainActivity.this, Notes.class);
-                startActivity(intent_notes);
-            }
-        });
+
         Button archive = (Button) findViewById(R.id.b_To_Archive);
         archive.setOnClickListener(new View.OnClickListener() {
             @Override
