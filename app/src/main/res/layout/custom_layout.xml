@@ -8,37 +8,49 @@
     <EditText
         android:id="@+id/Company"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="57dp"
         android:hint="Company Name"
         android:inputType="textCapSentences"
-        >
+        android:textAlignment="center">
 
     </EditText>
+
     <EditText
         android:id="@+id/Supplier"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="58dp"
         android:hint="Supplier Name"
         android:inputType="textCapSentences"
-        >
+        android:textAlignment="center">
 
     </EditText>
+
     <EditText
-        android:id="@+id/TotalNumber_Units"
+        android:id="@+id/Unit_Names"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Number of Units"
-        android:inputType="number"
-        >
+        android:layout_height="57dp"
+        android:ems="10"
+        android:hint="Unit Name"
+        android:inputType="textPersonName"
+        android:textAlignment="center" />
 
-    </EditText>
     <EditText
         android:id="@+id/TotalNumber_Price"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Cost of Pallet"
+        android:layout_height="57dp"
+        android:hint="Total Cost of Unit"
         android:inputType="numberDecimal"
-        >
+        android:textAlignment="center">
 
     </EditText>
+
+    <EditText
+        android:id="@+id/Total_Units"
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:ems="10"
+        android:hint="Total Number of Units"
+        android:inputType="textPersonName"
+        android:textAlignment="center" />
+
 </LinearLayout>
