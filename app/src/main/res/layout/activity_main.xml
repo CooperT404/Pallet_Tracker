@@ -106,4 +106,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/New_Pallet" />
 
+    <Button
+        android:id="@+id/TOS"
+        android:layout_width="49dp"
+        android:layout_height="49dp"
+        android:text="TOS"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

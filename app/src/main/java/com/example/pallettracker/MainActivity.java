@@ -7,17 +7,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.view.LayoutInflater;
-import android.database.Cursor;
-import android.widget.ScrollView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.List;
 import java.util.Random;
 
 
@@ -26,11 +24,6 @@ public class MainActivity extends AppCompatActivity {
     private MyDatabaseHelper dbHelper;
     private LinearLayout verticalLayout;
     private layoutButtons LB;
-
-
-
-
-
     private int total_Pallets = 1;
     private int unique_Units = 0;
     private int RandNum = 0;
@@ -73,11 +66,11 @@ public class MainActivity extends AppCompatActivity {
         Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SQLiteDatabase db = dbHelper.getReadableDatabase();
-                dbHelper.onDelete(db);
+
 
             }
         });
+
         //------------------------------------------------------------------------------------
 
 
@@ -91,10 +84,11 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("MyApp", "in random loop");
                     RandNum = random.nextInt(Max - Min + 1) + Min;
                 }while(dbHelper.doesUserIDExist(RandNum) == true);
-                createNumberedButtons(total_Pallets);
+                createButtonsWithTags();
                 showInputDialog();
             }
         });
+        createButtonsWithTags();
 
     }
 
@@ -191,165 +185,134 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void createNumberedButtons(int count) {
-        Button button = new Button(this);
-        for (int i = count - 1; i < count; i++) {
 
-            button.setText(String.valueOf(i));
-            button.setId(View.generateViewId()); // Set a unique ID for each button (optional)
-            button.setTag(androidx.leanback.R.id.button,RandNum);
-            button.setTag(androidx.leanback.R.id.button, count);
-            // Set an onClickListener for each button
+    private void createButtonsWithTags() {
+        List<String> uniqueIDs = dbHelper.getUniqueIDs();
+
+        for (String id : uniqueIDs) {
+            Button button = new Button(this);
+            button.setText(id);
+            button.setTag(id);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int x = (int) button.getTag(1);
-                    int y = (int) button.getTag(2);
+                    String tag = (String) v.getTag();
+                    List<String> IDs = dbHelper.getIDsByTag(tag);
 
-                    showDataForButton(x , y);
+                    // Create a new AlertDialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("New Buttons");
+
+                    // Create a LinearLayout to hold the new buttons
+                    LinearLayout dialogLayout = new LinearLayout(MainActivity.this);
+                    dialogLayout.setOrientation(LinearLayout.VERTICAL);
+
+                    // Initialize a counter for the new button tags
+                    int counter = 1;
+
+                    for (String newID : IDs) {
+                        Button newButton = new Button(MainActivity.this);
+                        newButton.setText(newID);
+                        newButton.setTag(counter); // Set the tag to the counter value
+                        int finalCounter = counter;
+                        newButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                showCustomDialog(Integer.parseInt(newID),finalCounter); // Use the counter value
+                            }
+                        });
+                        dialogLayout.addView(newButton);
+                        counter++; // Increment the counter for the next button
+                    }
+
+                    // Set the LinearLayout as the dialog's view
+                    builder.setView(dialogLayout);
+
+                    // Add a button to close the dialog
+                    builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    // Show the dialog
+                    builder.show();
                 }
             });
-
-            // Add the button to the vertical layout
             verticalLayout.addView(button);
         }
     }
-    private void showDataForButton(int buttonNumber, int bTag2) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        //show layout in scroll view first
-        ScrollView scrollView = findViewById(R.id.scrollView2);
-        scrollView.setVisibility(View.VISIBLE);
-
-        LinearLayout mainLayout = findViewById(R.id.Main_Layout);
-
-        int showedNum = 0;
-
-        // Query your database based on the button number; also used to get the number of rows in the database with the same name
-        Cursor cursor = db.rawQuery("SELECT * FROM my_table WHERE _id = ?", new String[]{String.valueOf(buttonNumber)});
-        int totalRows = cursor.getCount();
-        Object tagNum = bTag2;
-        if(tagNum instanceof Integer){
-            showedNum = (Integer) tagNum;
-        }
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dRetrive = inflater.inflate(R.layout.data_get_from_db_custom_layout, null);
 
 
 
+    private void showCustomDialog(int tag, int oTag) {
+        // Inflate the custom layout
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.data_get_from_db_custom_layout, null);
 
+        // Use dialogView.findViewById to reference the EditText fields within the custom layout
+        EditText company = dialogView.findViewById(R.id.editText1);
+        EditText supplier = dialogView.findViewById(R.id.editText2);
+        EditText unitName = dialogView.findViewById(R.id.editText3);
+        EditText unitPrice = dialogView.findViewById(R.id.editText4);
+        EditText units = dialogView.findViewById(R.id.editText5);
 
-        String company = "";
-        String supplier = "";
+        // Log the EditText references to ensure they are not null
+        Log.d("Dialog", "company EditText: " + (company != null));
+        Log.d("Dialog", "supplier EditText: " + (supplier != null));
+        Log.d("Dialog", "unitName EditText: " + (unitName != null));
+        Log.d("Dialog", "unitPrice EditText: " + (unitPrice != null));
+        Log.d("Dialog", "units EditText: " + (units != null));
 
-        if(cursor != null && cursor.moveToFirst()){
+        // Retrieve and log the data from the database
+        String companyData = dbHelper.getStringFromDatabase(tag, MyDatabaseHelper.COLUMN_COMPANY, oTag);
+        String supplierData = dbHelper.getStringFromDatabase(tag, "supplier",oTag);
+        String unitNameData = dbHelper.getStringFromDatabase(tag, "unitsName", oTag);
+        String unitPriceData = dbHelper.getStringFromDatabase(tag, "cost", oTag);
+        String unitsData = dbHelper.getStringFromDatabase(tag, "units", oTag);
 
-            int companyIndex = cursor.getColumnIndex("company");
-            int supplierIndex = cursor.getColumnIndex("supplier");
+        Log.d("Database", "companyData: " + companyData);
+        Log.d("Database", "supplierData: " + supplierData);
+        Log.d("Database", "unitNameData: " + unitNameData);
+        Log.d("Database", "unitPriceData: " + unitPriceData);
+        Log.d("Database", "unitsData: " + unitsData);
 
-            if(companyIndex != -1 && supplierIndex != -1){
-                company = cursor.getString(companyIndex);
-                supplier = cursor.getString(supplierIndex);
+        // Set the text for the EditText fields
+        company.setText(companyData);
+        supplier.setText(supplierData);
+        unitName.setText(unitNameData);
+        unitPrice.setText(unitPriceData);
+        units.setText(unitsData);
 
-            }
-
-        }
-
-        AlertDialog.Builder retriveData = new AlertDialog.Builder(this);
-        retriveData.setTitle("Button Number: " + showedNum);
-
-        //populate the scroll layout and the company selection with data from the database; the 'OK' will just dismiss the current dialogue box
-
-        EditText Company = dRetrive.findViewById(R.id.Company_Name_Here);
-        EditText Supplier = dRetrive.findViewById(R.id.Supplier_Name_Here);
-
-
-
-
-        Company.setText(company);
-        Supplier.setText(supplier);
-        for (int i = 0; i < totalRows; i++) {
-
-            // Create a button for each row
-            String unitName = String.valueOf(cursor.getColumnIndex("unitsName"));
-            Button dataPoint = new Button(this);
-            dataPoint.setText(unitName);
-
-            int getID = cursor.getColumnIndex("_id");
-            dataPoint.setTag(1,i);
-
-            mainLayout.addView(dataPoint);
-
-            dataPoint.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int buttonnum = 0;
-                    buttonnum = (int) dataPoint.getTag(1);
-                    retriveData(view, getID, buttonnum);
-
-                }
-            });
-
-
-
-
-
-        }
-
-        retriveData.setPositiveButton("OK",null);
-
-
-        retriveData.setView(dRetrive);
-        retriveData.show();
-    }
-    //get the buttons number to retrive the button tag between methods
-
-
-    public void retriveData (View view, int I, int rowSelect){
-        AlertDialog.Builder update = new AlertDialog.Builder(this);
-        update.setTitle("Update Pallet");
-
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        View dialogueView = LayoutInflater.from(this).inflate(R.layout.custom_layout, null);
-
-        EditText Name = dialogueView.findViewById(R.id.Unit_Names);
-        EditText NumUnits = dialogueView.findViewById(R.id.Total_Units);
-        EditText TotalPrice = dialogueView.findViewById(R.id.TotalNumber_Price);
-
-        Cursor cursor = db.rawQuery("SELECT * FROM my_table WHERE _id = ?", new String[]{String.valueOf(I)});
-        if(cursor != null && cursor.moveToPosition(I - 1)){
-            String Name1 = String.valueOf(cursor.getColumnIndex("unitsName"));
-            int NumUnits1 = cursor.getColumnIndex("units");
-            int TotalPrice1 = cursor.getColumnIndex("cost");
-            Name.setText(Name1);
-            NumUnits.setText(NumUnits1);
-            TotalPrice.setText(TotalPrice1);
-        }
-
-
-        update.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        // Create an AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Tag: " + tag);
+        builder.setView(dialogView);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String UpdateName = Name.getText().toString();
-                String UpdateNum = NumUnits.getText().toString();
-                String UpdateTotal = TotalPrice.getText().toString();
+            public void onClick(DialogInterface dialog, int which) {
+                String comFinal = company.getText().toString();
+                String supFinal = supplier.getText().toString();
+                String unitNameFinal = unitName.getText().toString();
+                String unitPriceFinal = unitPrice.getText().toString();
+                String unitsFinal = units.getText().toString();
 
-                int IntNum = Integer.parseInt(UpdateNum);
-                int IntTotal = Integer.parseInt(UpdateTotal);
-
-                dbHelper.updateData(I, UpdateName, IntNum, IntTotal);
+                dbHelper.updateData(tag, oTag, unitNameFinal, unitsFinal, supFinal, unitPriceFinal, comFinal);
 
 
-                AlertDialog updater = update.create();
-                updater.show();
+                dialog.dismiss();
             }
         });
 
-
-
-
-
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
+
+
+
+
+
 
 }
 

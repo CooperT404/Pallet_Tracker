@@ -5,46 +5,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
-        android:id="@+id/scrollView2"
-        android:layout_width="408dp"
-        android:layout_height="500dp"
-        android:layout_marginTop="160dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        android:visibility="gone"
-        >
+    <!-- res/layout/dialog_custom_layout.xml -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:ignore="MissingConstraints">
 
-        <LinearLayout
-            android:id="@+id/Main_Layout"
+        <EditText
+            android:id="@+id/editText1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
+            android:hint="EditText 1" />
 
-    <TextView
-        android:id="@+id/Company_Name_Here"
-        android:layout_width="294dp"
-        android:layout_height="40dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <EditText
+            android:id="@+id/editText2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="EditText 2" />
 
-    <TextView
-        android:id="@+id/Supplier_Name_Here"
-        android:layout_width="294dp"
-        android:layout_height="40dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Company_Name_Here"
-        app:layout_constraintVertical_bias="0.0" />
+        <EditText
+            android:id="@+id/editText3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="EditText 3" />
+
+        <EditText
+            android:id="@+id/editText4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="EditText 4" />
+
+        <EditText
+            android:id="@+id/editText5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="EditText 5" />
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
