@@ -1,20 +1,26 @@
 package com.example.pallettracker;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.view.LayoutInflater;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Random;
 
@@ -23,12 +29,15 @@ public class MainActivity extends AppCompatActivity {
 
     private MyDatabaseHelper dbHelper;
     private LinearLayout verticalLayout;
-    private layoutButtons LB;
     private int total_Pallets = 1;
     private int unique_Units = 0;
     private int RandNum = 0;
     private int Max = 99999;
     private int Min = 10000;
+    private Context context;
+    private String[] fileNames = {"copyrightpolicy.txt", "eula.txt", "privacypolicy.txt", "tacfos.txt"};
+    private int currentFileIndex = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
 
         dbHelper = new MyDatabaseHelper(this);
         verticalLayout = findViewById(R.id.Pallet_Info_ButtonsList);
+
+
+
+
 
         //new random instance
         Random random = new Random();
@@ -89,13 +102,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         createButtonsWithTags();
-
+        showNextDialog();
     }
 
 
 
     protected void showInputDialog() {
-        LB = new layoutButtons();
+
 
         LayoutInflater layoutInflater = LayoutInflater.from(this);
         View promptView = layoutInflater.inflate(R.layout.custom_layout, null);
@@ -310,6 +323,79 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+    public void showNextDialog() {
+        if (currentFileIndex < fileNames.length) {
+            String fileName = fileNames[currentFileIndex];
+            String fileContent = readFileFromAssets(fileName);
+
+            // Log the file content to verify it is being read correctly
+            Log.d("FileContent", fileContent);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Document " + (currentFileIndex + 1));
+
+            ScrollView scrollView = new ScrollView(this);
+            TextView textView = new TextView(this);
+            textView.setText(fileContent);
+
+            // Set text size and padding for better visibility
+            textView.setTextSize(16);
+            textView.setPadding(16, 16, 16, 16);
+
+            scrollView.addView(textView);
+
+            CheckBox checkBox = new CheckBox(this);
+            checkBox.setText("I have read and understood this document");
+
+            LinearLayout layout = new LinearLayout(this);
+            layout.setOrientation(LinearLayout.VERTICAL);
+            layout.addView(scrollView, new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f));
+            layout.addView(checkBox, new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+            builder.setView(layout);
+
+            builder.setPositiveButton("Next", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (checkBox.isChecked()) {
+                        currentFileIndex++;
+                        showNextDialog();
+                    } else {
+                        // Redisplay the last message
+                        showNextDialog();
+                    }
+                }
+            });
+
+            builder.setNegativeButton("Cancel", null);
+            builder.show();
+        } else {
+            // All documents have been shown
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("All documents have been read.");
+            builder.setPositiveButton("OK", null);
+            builder.show();
+        }
+    }
+
+    private String readFileFromAssets(String fileName) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            InputStream inputStream = getAssets().open(fileName);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append("\n");
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
+    }
 
 
 
